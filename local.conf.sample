@@ -1,0 +1,25 @@
+# Build configuration — the "mydistro" equivalent.
+# Copy to build/conf/local.conf after sourcing oe-init-build-env.
+
+MACHINE = "imx8mp-lpddr4-evk"
+
+DISTRO = "mydistro"
+
+# ---------- boring stuff §2: disposable rootfs ----------
+IMAGE_FEATURES += "read-only-rootfs ssh-server-openssh"
+
+# ---------- boring stuff §8: eng vs rel ----------
+# 'eng' keeps debug shells and skips crash-reboots (see hello.service).
+BUILDTYPE = "rel"
+
+# ---------- image ----------
+IMAGE_FSTYPES = "wic.bz2 tar.zst"
+WKS_FILE = "myimage-ab.wks"
+
+# ---------- reproducibility ----------
+INHERIT += "buildhistory"
+BUILDHISTORY_COMMIT = "1"
+
+# ---------- mirror hygiene: pin everything ----------
+# BB_GENERATE_MIRROR_TARBALLS = "1"
+# BB_NO_NETWORK = "1"   # only after a populated download cache

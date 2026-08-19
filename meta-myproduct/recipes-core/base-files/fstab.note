@@ -1,0 +1,21 @@
+# Boring stuff §2: the disposable rootfs — fstab straight from the platform.s unit.
+# The system partition is read-only; volatile state is tmpfs;
+# external media gets a tmpfs mountpoint.
+
+# /etc/fstab
+/dev/root            /                    auto       ro                            1  0
+proc                 /proc                proc       defaults                      0  0
+devpts               /dev/pts             devpts     mode=0620,gid=5               0  0
+tmpfs                /run                 tmpfs      mode=0755,nodev,nosuid,strictatime 0  0
+tmpfs                /var/volatile        tmpfs      nodev                         0  0
+tmpfs                /media               tmpfs      nodev                         0  0
+
+# Writable user data is NOT in rootfs — it lives on a separate partition
+# (see myimage-ab.wks.in: the "userdata" ext4 partition), mounted at /data:
+#   /dev/disk/by-partlabel/userdata  /data   auto  defaults  0  2
+#
+# systemd services get writable spots without privileges:
+#   [Service]
+#   User=hello
+#   StateDirectory=hello          -> /var/lib/hello (tmpfs-backed or on /data)
+#   BindPaths=/data/userdata/hello:/var/lib/hello/usr

@@ -1,0 +1,55 @@
+software = {
+    version = "0.1";
+
+    myproduct = {
+        hardware-compatibility: [ "1.0" ];
+
+        /* Boring stuff §7: the signed update description.
+           Each image: target by partlabel (never device numbers),
+           sha256 per payload, slots for A/B. */
+
+        slot_a: {
+            images: (
+                {
+                    filename = "rootfs.ext4.zst";
+                    device = "/dev/disk/by-partlabel/root_a";
+                    sha256 = "@ROOTFS_SHA256@";
+                    compressed = "zstd";
+                    installed-directly = true;
+                }
+            );
+            scripts: (
+                {
+                    filename = "mark-good.sh";
+                    type = "postinstall";
+                    data = "a";
+                }
+            );
+        };
+
+        slot_b: {
+            images: (
+                {
+                    filename = "rootfs.ext4.zst";
+                    device = "/dev/disk/by-partlabel/root_b";
+                    sha256 = "@ROOTFS_SHA256@";
+                    compressed = "zstd";
+                    installed-directly = true;
+                }
+            );
+            scripts: (
+                {
+                    filename = "mark-good.sh";
+                    type = "postinstall";
+                    data = "b";
+                }
+            );
+        };
+    };
+}
+
+/* The container: header + this description + RSA signature + payloads.
+   Sign with:  openssl dgst -sha256 -sign key.pem sw-description > sw-description.sig
+   Commit-or-rollback: mark-good.sh runs only after the new slot boots
+   successfully; otherwise the bootloader falls back to the old slot.
+*/

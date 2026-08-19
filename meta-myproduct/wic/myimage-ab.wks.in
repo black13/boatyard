@@ -1,0 +1,15 @@
+# Boring stuff §4: A/B partition layout for the i.MX8MP EVK (SD card).
+# Two root slots; the updater writes the INACTIVE slot and flips boot_slot.
+#
+# Layout (SD card):
+#   boot     fat32    kernel + dtb (shared between slots)
+#   root_a   ext4     slot A
+#   root_b   ext4     slot B
+#   userdata ext4     survives both slots
+
+part /boot --source bootimg-partition --ondisk mmcblk0 --label boot --active --align 4096 --size 128
+part / --source rootfs --ondisk mmcblk0 --label root_a --fstype=ext4 --align 4096 --size 2048
+part / --source rootfs --ondisk mmcblk0 --label root_b --fstype=ext4 --align 4096 --size 2048
+part /data --ondisk mmcblk0 --label userdata --fstype=ext4 --align 4096 --size 512 --fixed-size 512
+
+bootloader --ptable gpt
