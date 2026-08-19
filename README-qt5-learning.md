@@ -31,7 +31,7 @@ runqemu qemuarm64 nographic slirp     # boot
 # on the target:
 export XDG_RUNTIME_DIR=/run/user/root
 weston --tty=1 &
-hello-ui -platform wayland             # the Garmin path: Qt on Weston
+hello-ui -platform wayland             # the reference path: Qt on Weston
 # or skip the compositor entirely:
 hello-ui -platform eglfs               # Qt owns the screen (kiosk without Weston)
 ```
