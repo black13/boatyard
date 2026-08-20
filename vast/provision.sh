@@ -1,10 +1,10 @@
 #!/bin/bash
-# boatyard build-out — ONE script, everything.
-# Run on the vast box:   curl -sL https://raw.githubusercontent.com/black13/boatyard/main/vast/build-all.sh | bash
+# boatyard provision — gets the machine READY to build (one-time per box).
+# Run on the vast box:   curl -sL https://raw.githubusercontent.com/black13/boatyard/main/vast/provision.sh | bash
 set -e
 export DEBIAN_FRONTEND=noninteractive
 
-echo "=== [1/4] apt packages ==="
+echo "=== [1/3] apt packages ==="
 apt-get update -y -q
 apt-get install -y -q gawk wget git diffstat unzip gcc build-essential \
     chrpath cpio python3 python3-pip python3-pexpect xz-utils debianutils \
@@ -13,7 +13,7 @@ apt-get install -y -q gawk wget git diffstat unzip gcc build-essential \
 locale-gen en_US.UTF-8
 git config --global --add safe.directory '*'
 
-echo "=== [2/4] clone layers (GitHub mirrors — git.yoctoproject.org is blocked here) ==="
+echo "=== [2/3] clone layers (GitHub mirrors — git.yoctoproject.org is blocked here) ==="
 mkdir -p ~/yocto && cd ~/yocto
 # remove any half-cloned dirs from a failed run
 [ -d poky/.git ]              || rm -rf poky
@@ -23,7 +23,7 @@ mkdir -p ~/yocto && cd ~/yocto
 [ -d meta-qt5 ]               || git clone -q -b kirkstone https://github.com/meta-qt5/meta-qt5.git
 if [ -d boatyard ]; then (cd boatyard && git pull -q); else git clone -q https://github.com/black13/boatyard.git; fi
 
-echo "=== [3/4] configure ==="
+echo "=== [3/3] configure ==="
 cd poky
 source oe-init-build-env build
 
@@ -56,11 +56,5 @@ fi
 # we build as root inside the vast container — skip the host sanity checks
 touch conf/sanity.conf
 
-echo "=== [4/4] build (detached, log ~/build.log) ==="
-nohup nice -n 10 bitbake core-image-minimal > ~/build.log 2>&1 &
-
 echo
-echo "build is running. Live view:  tail -f ~/build.log"
-echo "(ctrl-c stops the VIEW, not the build)"
-echo
-echo "When you see 'Tasks Summary' near the end of the log, it's done."
+echo "machine is ready. now run the build script."
