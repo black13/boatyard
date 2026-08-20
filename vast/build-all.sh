@@ -11,6 +11,7 @@ apt-get install -y -q gawk wget git diffstat unzip gcc build-essential \
     python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev xterm python3-subunit \
     mesa-common-dev zstd liblz4-tool file locales
 locale-gen en_US.UTF-8
+git config --global --add safe.directory '*'
 
 echo "=== [2/4] clone layers (GitHub mirrors — git.yoctoproject.org is blocked here) ==="
 mkdir -p ~/yocto && cd ~/yocto
