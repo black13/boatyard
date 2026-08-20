@@ -52,6 +52,9 @@ PARALLEL_MAKE = "-j 24"
 EOF
 fi
 
+# we build as root inside the vast container — skip the host sanity checks
+touch conf/sanity.conf
+
 echo "=== [4/4] build (detached, log ~/build.log) ==="
 nohup nice -n 10 bitbake core-image-minimal > ~/build.log 2>&1 &
 
