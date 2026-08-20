@@ -12,12 +12,15 @@ apt-get install -y -q gawk wget git diffstat unzip gcc build-essential \
     mesa-common-dev zstd liblz4-tool file locales
 locale-gen en_US.UTF-8
 
-echo "=== [2/4] clone layers ==="
+echo "=== [2/4] clone layers (GitHub mirrors — git.yoctoproject.org is blocked here) ==="
 mkdir -p ~/yocto && cd ~/yocto
-[ -d poky ]              || git clone -q -b kirkstone git://git.yoctoproject.org/poky.git
-[ -d meta-openembedded ] || git clone -q -b kirkstone git://git.openembedded.org/meta-openembedded
-[ -d meta-qt5 ]          || git clone -q -b kirkstone https://github.com/meta-qt5/meta-qt5.git
-[ -d boatyard ]          || git clone -q https://github.com/black13/boatyard.git
+# remove any half-cloned dirs from a failed run
+[ -d poky/.git ]              || rm -rf poky
+[ -d meta-openembedded/.git ] || rm -rf meta-openembedded
+[ -d poky ]                   || git clone -q -b kirkstone https://github.com/yoctoproject/poky.git
+[ -d meta-openembedded ]      || git clone -q -b kirkstone https://github.com/openembedded/meta-openembedded.git
+[ -d meta-qt5 ]               || git clone -q -b kirkstone https://github.com/meta-qt5/meta-qt5.git
+[ -d boatyard ]               || git clone -q https://github.com/black13/boatyard.git
 
 echo "=== [3/4] configure ==="
 cd poky
