@@ -34,12 +34,13 @@ BBLAYERS ?= " \
   ${TOPDIR}/../meta \
   ${TOPDIR}/../meta-poky \
   ${TOPDIR}/../meta-yocto-bsp \
-  ${TOPDIR}/../meta-openembedded/meta-oe \
-  ${TOPDIR}/../meta-qt5 \
-  ${TOPDIR}/../boatyard/meta-myproduct \
+  ${TOPDIR}/../../meta-openembedded/meta-oe \
+  ${TOPDIR}/../../meta-qt5 \
+  ${TOPDIR}/../../boatyard/meta-myproduct \
   "
 EOF
 
+if ! grep -q '^MACHINE = "qemuarm64"' conf/local.conf; then
 cat >> conf/local.conf <<'EOF'
 MACHINE = "qemuarm64"
 IMAGE_INSTALL:append = " qtbase qtdeclarative hello-ui hello"
@@ -49,6 +50,7 @@ DISTRO_FEATURES:append = " opengl wayland"
 BB_NUMBER_THREADS = "24"
 PARALLEL_MAKE = "-j 24"
 EOF
+fi
 
 echo "=== [4/4] build (detached, log ~/build.log) ==="
 nohup nice -n 10 bitbake core-image-minimal > ~/build.log 2>&1 &
