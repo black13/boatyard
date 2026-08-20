@@ -20,7 +20,7 @@ mkdir -p ~/yocto && cd ~/yocto
 [ -d poky ]                   || git clone -q -b kirkstone https://github.com/yoctoproject/poky.git
 [ -d meta-openembedded ]      || git clone -q -b kirkstone https://github.com/openembedded/meta-openembedded.git
 [ -d meta-qt5 ]               || git clone -q -b kirkstone https://github.com/meta-qt5/meta-qt5.git
-[ -d boatyard ]               || git clone -q https://github.com/black13/boatyard.git
+if [ -d boatyard ]; then (cd boatyard && git pull -q); else git clone -q https://github.com/black13/boatyard.git; fi
 
 echo "=== [3/4] configure ==="
 cd poky
