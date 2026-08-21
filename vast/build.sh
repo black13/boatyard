@@ -1,12 +1,18 @@
 #!/bin/bash
 # boatyard build — runs bitbake, detached, log at ~/build.log.
-# Optional argument = MACHINE (default qemuarm64).
-#   curl -sL https://raw.githubusercontent.com/black13/boatyard/main/vast/build.sh | bash
-#   curl -sL https://raw.githubusercontent.com/black13/boatyard/main/vast/build.sh | bash -s beaglebone-yocto
-#   curl -sL https://raw.githubusercontent.com/black13/boatyard/main/vast/build.sh | bash -s genericx86-64
+#   bash build.sh [MACHINE] [IMAGE]
+# defaults: qemuarm64 / core-image-minimal
+#
+# The graphical demo (weston + Qt5 QML):
+#   curl -sL https://raw.githubusercontent.com/black13/boatyard/main/vast/build.sh | bash -s qemux86-64 boatyard-demo-image
+#
+# Other targets:
+#   bash -s beaglebone-yocto            # BeagleBone Black
+#   bash -s genericx86-64               # old PCs / laptops
 set -e
 
 MACHINE_TARGET="${1:-qemuarm64}"
+IMAGE_TARGET="${2:-core-image-minimal}"
 
 cd ~/yocto/poky
 source oe-init-build-env build
@@ -14,8 +20,8 @@ touch conf/sanity.conf
 
 sed -i "s/^MACHINE = .*/MACHINE = \"$MACHINE_TARGET\"/" conf/local.conf
 
-echo "starting bitbake core-image-minimal for $MACHINE_TARGET (detached, log ~/build.log)..."
-nohup nice -n 10 bitbake core-image-minimal > ~/build.log 2>&1 &
+echo "starting bitbake $IMAGE_TARGET for $MACHINE_TARGET (detached, log ~/build.log)..."
+nohup nice -n 10 bitbake "$IMAGE_TARGET" > ~/build.log 2>&1 &
 
 echo
 echo "build is running. Live view:  tail -f ~/build.log"
