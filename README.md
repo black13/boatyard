@@ -58,3 +58,25 @@ exactly like the platform.s devices do.
 | §6 real-time | kernel cmdline in `imx8mp-lpddr4-evk.conf` |
 | §7 container format | `sw-description` + signing notes in README |
 | §8 eng/rel culture | `BUILDTYPE` distro knob in `mydistro.conf` |
+
+## Session checkpoint (last session)
+
+- **Built and booted**: `core-image-minimal` (qemuarm64) and
+  `boatyard-demo-image` (qemux86-64) on a vast.ai box — both complete,
+  all tasks succeeded.
+- **boatyard-demo-image** = Weston + Qt5 + hello-ui (auto-launch wrapper).
+  Image + kernel downloaded locally to `qemu-run/images/`.
+- **Local boot**: `qemu-run\run-demo.cmd` boots the demo in a QEMU window
+  (Weston desktop renders). Known issue at close of session: hello-ui
+  crashes on autolaunch (Qt picks xcb instead of wayland) — the wrapper
+  fix is committed but NOT baked into the downloaded image yet.
+- **Workaround in the running VM**: open weston-terminal from the panel,
+  then `export QT_QPA_PLATFORM=wayland; hello-ui`.
+- **To bake the fix**: new vast box → `vast/provision.sh` →
+  `vast/build.sh -s qemux86-64 boatyard-demo-image` → `vast/download-demo.py`
+  → relaunch `run-demo.cmd`.
+- **vast helpers**: `vast/build-box.py` (self-healing launcher),
+  `vast/remote.py`, `vast/download-demo.py`, `vast/vast-create.py`.
+- **Open threads**: BeagleBone Black (`beaglebone-yocto`) and old Dell
+  (`genericx86-64`) targets — one build.sh argument each; GSDT-26 sonar
+  module analysis; Hetzner (account verification pending).
