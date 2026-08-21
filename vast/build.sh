@@ -20,12 +20,10 @@ touch conf/sanity.conf
 
 sed -i "s/^MACHINE = .*/MACHINE = \"$MACHINE_TARGET\"/" conf/local.conf
 
-echo "starting bitbake $IMAGE_TARGET for $MACHINE_TARGET (detached, log ~/build.log)..."
-nohup nice -n 10 bitbake "$IMAGE_TARGET" > ~/build.log 2>&1 &
+echo "starting bitbake $IMAGE_TARGET for $MACHINE_TARGET (live output, tee ~/build.log)..."
+echo
+bitbake "$IMAGE_TARGET" 2>&1 | tee ~/build.log
 
 echo
-echo "build is running. Live view:  tail -f ~/build.log"
-echo "(ctrl-c stops the VIEW, not the build)"
-echo
-echo "When you see 'Tasks Summary' near the end of the log, it's done."
+echo "done — see 'Tasks Summary' above. (ctrl-c here stops the build; the log stays in ~/build.log)"
 echo "Image lands in: ~/yocto/poky/build/tmp/deploy/images/$MACHINE_TARGET/"
